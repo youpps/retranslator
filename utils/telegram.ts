@@ -84,7 +84,7 @@ class Telegram {
     this.client.addEventHandler(callback, new NewMessage({ incoming: true, outgoing: false }));
   }
 
-  async sendPhotoMediaGroup(chat: number | string, files: { file: Buffer; caption: string; entities: MessageEntity[] | undefined }[], message_thread_id?: number) {
+  async sendPhotoMediaGroup(chat: number | string, files: { file: Buffer; caption: string; entities: MessageEntity[] | undefined }[]) {
     await this.bot.sendMediaGroup(
       chat,
       files.map(({ file, caption, entities }) => ({
@@ -94,12 +94,11 @@ class Telegram {
         media: {
           source: file,
         },
-      })),
-      { message_thread_id }
+      }))
     );
   }
 
-  async sendVideoMediaGroup(chat: number | string, files: { file: Buffer; caption: string; entities: MessageEntity[] | undefined }[], message_thread_id?: number) {
+  async sendVideoMediaGroup(chat: number | string, files: { file: Buffer; caption: string; entities: MessageEntity[] | undefined }[]) {
     await this.bot.sendMediaGroup(
       chat,
       files.map(({ file, caption, entities }) => ({
@@ -109,12 +108,11 @@ class Telegram {
         media: {
           source: file,
         },
-      })),
-      { message_thread_id }
+      }))
     );
   }
 
-  async sendDocumentMediaGroup(chat: number | string, files: { file: Buffer; filename: string; caption: string; entities: MessageEntity[] | undefined }[], message_thread_id?: number) {
+  async sendDocumentMediaGroup(chat: number | string, files: { file: Buffer; filename: string; caption: string; entities: MessageEntity[] | undefined }[]) {
     await this.bot.sendMediaGroup(
       chat,
       files.map(({ file, caption, entities, filename }) => ({
@@ -125,12 +123,11 @@ class Telegram {
           filename,
           source: file,
         },
-      })),
-      { message_thread_id }
+      }))
     );
   }
 
-  async sendPhoto(chat: number | string, photo: Buffer, caption: string, entities?: MessageEntity[], message_thread_id?: number) {
+  async sendPhoto(chat: number | string, photo: Buffer, caption: string, entities?: MessageEntity[]) {
     await this.bot.sendPhoto(
       chat,
       {
@@ -138,13 +135,12 @@ class Telegram {
       },
       {
         caption,
-        message_thread_id,
         caption_entities: entities,
       }
     );
   }
 
-  async sendVideo(chat: number | string, video: Buffer, caption: string, entities?: MessageEntity[], message_thread_id?: number) {
+  async sendVideo(chat: number | string, video: Buffer, caption: string, entities?: MessageEntity[]) {
     await this.bot.sendVideo(
       chat,
       {
@@ -152,13 +148,12 @@ class Telegram {
       },
       {
         caption,
-        message_thread_id,
         caption_entities: entities,
       }
     );
   }
 
-  async sendDocument(chat: number | string, document: Buffer, filename: string, caption: string, entities?: MessageEntity[], message_thread_id?: number) {
+  async sendDocument(chat: number | string, document: Buffer, filename: string, caption: string, entities?: MessageEntity[]) {
     await this.bot.sendDocument(
       chat,
       {
@@ -167,14 +162,13 @@ class Telegram {
       },
       {
         caption,
-        message_thread_id,
         caption_entities: entities,
       }
     );
   }
 
-  async sendMessage(chat: number | string, message: string, entities?: MessageEntity[], message_thread_id?: number) {
-    await this.bot.sendMessage(chat, message, { message_thread_id, entities });
+  async sendMessage(chat: number | string, message: string, entities?: MessageEntity[]) {
+    await this.bot.sendMessage(chat, message, { entities });
   }
 
   async getChats() {
