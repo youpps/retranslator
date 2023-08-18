@@ -156,6 +156,8 @@ async function bootstrap() {
 
         console.log("CHATFROM: ", username);
         console.log("CHATFROM_ID: ", message.chatId.toJSNumber(), message.fromId?.toJSON());
+        console.log("MESSAHE", message);
+
         console.log("================");
 
         for (let channel of channels) {
