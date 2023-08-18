@@ -7,6 +7,7 @@ import path from "path";
 import Channels from "./utils/channels";
 import Filters from "./utils/filters";
 import { MessageEntity } from "telegraf/typings/core/types/typegram";
+import Messages from "./utils/messages";
 
 const PORT = process.env.PORT || 5000;
 
@@ -41,10 +42,17 @@ async function bootstrap() {
         groupedMessages[groupedId] = [{ file, caption, filename, entities }];
       } else {
         groupedMessages[groupedId].push({ file, caption, filename, entities });
+        return;
       }
 
       setTimeout(() => {
         if (!groupedMessages[groupedId]) {
+          return;
+        }
+
+        const isCaption = groupedMessages[groupedId].some(({ caption }) => !!caption);
+        if (!isCaption) {
+          delete groupedMessages[groupedId];
           return;
         }
 
@@ -85,6 +93,10 @@ async function bootstrap() {
           }
 
           if (!isOk) return;
+        }
+
+        if (!messageText && !message.groupedId) {
+          return;
         }
 
         const getCorrectEntityType = (entityType: string): MessageEntity["type"] | null => {
@@ -157,6 +169,9 @@ async function bootstrap() {
         if (channels.includes(username as any)) {
           return;
         }
+
+        const isExists = await Messages.exists(messageText);
+        if (isExists) return;
 
         for (let channel of channels) {
           // if (channels.includes(username as any)) {
