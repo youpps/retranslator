@@ -155,7 +155,7 @@ async function bootstrap() {
         const channels = await Channels.getAll();
 
         console.log("CHATFROM: ", username);
-        console.log("CHATFROM_ID: ", message.chatId);
+        console.log("CHATFROM_ID: ", message.chatId, message.chatId.toJSNumber(), message.chatId.toString());
         console.log("================");
 
         for (let channel of channels) {
