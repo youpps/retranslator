@@ -67,8 +67,6 @@ class Telegram {
 
   async getUsername(entity: EntityLike) {
     const entityObj = (await this.client.getEntity(entity)) as any;
-    console.log(entityObj);
-
     return entityObj?.username ? "@" + entityObj?.username : (null as string | null);
   }
 
