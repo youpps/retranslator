@@ -155,9 +155,9 @@ async function bootstrap() {
         const channels = await Channels.getAll();
 
         for (let channel of channels) {
-          console.log(channel, Number.isInteger(Number(channel)));
+          console.log(username, Number.isInteger(Number(username)));
 
-          if (channel === username || Number.isInteger(Number(channel))) {
+          if (channel === username || Number.isInteger(Number(username))) {
             continue;
           }
 
