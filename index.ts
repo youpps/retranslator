@@ -154,9 +154,9 @@ async function bootstrap() {
         const username = await client.getUsername(message.chatId);
         const channels = await Channels.getAll();
 
-        const test = await client.getUsername(1373328489);
+        const test = await client.getUser(1373328489);
         console.log(test);
-        
+
         // console.log("CHATFROM: ", username);
         // console.log("CHATFROM_ID: ", message.chatId.toJSNumber(), message.fromId?.toJSON());
         // console.log("MESSAHE", message);
