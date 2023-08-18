@@ -196,12 +196,11 @@ async function bootstrap() {
       }
     });
 
-    const channelRegexp = /@.+/;
     app.all("/", async (req, res) => {
       try {
         const { channel_name } = req.body;
 
-        if (channel_name && channelRegexp.test(channel_name)) {
+        if (channel_name) {
           if (req.body["remove_channel"]) {
             const channel = channel_name;
 
