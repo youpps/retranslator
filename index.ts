@@ -155,6 +155,9 @@ async function bootstrap() {
         const channels = await Channels.getAll();
 
         for (let channel of channels) {
+          // const user = client.getUser(channel);
+          console.log(channel, message.chatId);
+
           if (channel === username) {
             continue;
           }
