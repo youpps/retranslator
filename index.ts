@@ -156,12 +156,9 @@ async function bootstrap() {
 
         console.log("CHATFROM: ", username);
         console.log("CHATFROM_ID: ", message.chatId.toJSNumber(), message.peerId);
-        // console.log("MESSAHE", message);
-
-        console.log("================");
 
         for (let channel of channels) {
-          if (channel === username) {
+          if (channel === username || Number.isInteger(channel)) {
             continue;
           }
 
