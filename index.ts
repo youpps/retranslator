@@ -153,12 +153,19 @@ async function bootstrap() {
 
         const username = await client.getUsername(message.chatId);
         const channels = await Channels.getAll();
-        console.log(username);
+
+        if (channels.includes(username as any)) {
+          return;
+        }
 
         for (let channel of channels) {
-          if (channel === username || Number.isInteger(Number(username))) {
-            continue;
-          }
+          // if (channels.includes(username as any)) {
+          //   continue;
+          // }
+
+          // if (channel === username || Number.isInteger(Number(username))) {
+          //   continue;
+          // }
 
           if (message.media && !message.webPreview) {
             if (message.groupedId) {
