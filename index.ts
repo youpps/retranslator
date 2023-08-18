@@ -155,9 +155,8 @@ async function bootstrap() {
         const channels = await Channels.getAll();
 
         for (let channel of channels) {
-          const channelUsername = await client.getUsername(channel);
-          console.log(channelUsername, username);
-
+          // const channelUsername = await client.getUsername(channel);
+          await client.sendMessage("@alexpavlowv", "HELLA");
           if (channel === username) {
             continue;
           }
