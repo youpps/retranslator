@@ -1,7 +1,7 @@
 import { Api, Logger, TelegramClient } from "telegram";
 import { NewMessage, NewMessageEvent } from "telegram/events";
 import { StringSession } from "telegram/sessions";
-import { Telegram as TelegramBot } from "telegraf";
+import { Telegram as TelegramBot, Telegraf } from "telegraf";
 import { LogLevel } from "telegram/extensions/Logger";
 import os from "os";
 import fs from "fs/promises";
@@ -24,7 +24,8 @@ class Telegram {
   private telegramPhone: string;
   private telegramPassword: string;
   public client: TelegramClient;
-  private bot: TelegramBot;
+  private bot: Telegraf;
+  private telegram: TelegramBot;
 
   constructor(props: ITelegram) {
     this.telegramPhone = props.telegramPhone;
@@ -40,7 +41,13 @@ class Telegram {
       appVersion: "1.0.0",
     });
 
-    this.bot = new TelegramBot(props.botToken);
+    this.bot = new Telegraf(props.botToken);
+
+    this.bot.start(async (ctx) => {
+      await ctx.reply(`Ваш id: ${ctx.chat.id}`);
+    });
+
+    this.telegram = this.bot.telegram;
   }
 
   static async createInstance(props: Omit<ITelegram, "session">) {
@@ -63,6 +70,8 @@ class Telegram {
     });
 
     await Session.setSession(this.client.session as StringSession);
+
+    this.bot.launch();
   }
 
   async getUsername(entity: EntityLike) {
@@ -95,7 +104,7 @@ class Telegram {
   }
 
   async sendPhotoMediaGroup(chat: number | string, files: { file: Buffer; caption: string; entities: MessageEntity[] | undefined }[]) {
-    await this.bot.sendMediaGroup(
+    await this.telegram.sendMediaGroup(
       chat,
       files.map(({ file, caption, entities }) => ({
         type: "photo",
@@ -109,7 +118,7 @@ class Telegram {
   }
 
   async sendVideoMediaGroup(chat: number | string, files: { file: Buffer; caption: string; entities: MessageEntity[] | undefined }[]) {
-    await this.bot.sendMediaGroup(
+    await this.telegram.sendMediaGroup(
       chat,
       files.map(({ file, caption, entities }) => ({
         type: "video",
@@ -123,7 +132,7 @@ class Telegram {
   }
 
   async sendDocumentMediaGroup(chat: number | string, files: { file: Buffer; filename: string; caption: string; entities: MessageEntity[] | undefined }[]) {
-    await this.bot.sendMediaGroup(
+    await this.telegram.sendMediaGroup(
       chat,
       files.map(({ file, caption, entities, filename }) => ({
         type: "document",
@@ -138,7 +147,7 @@ class Telegram {
   }
 
   async sendPhoto(chat: number | string, photo: Buffer, caption: string, entities?: MessageEntity[]) {
-    await this.bot.sendPhoto(
+    await this.telegram.sendPhoto(
       chat,
       {
         source: photo,
@@ -151,7 +160,7 @@ class Telegram {
   }
 
   async sendVideo(chat: number | string, video: Buffer, caption: string, entities?: MessageEntity[]) {
-    await this.bot.sendVideo(
+    await this.telegram.sendVideo(
       chat,
       {
         source: video,
@@ -164,7 +173,7 @@ class Telegram {
   }
 
   async sendDocument(chat: number | string, document: Buffer, filename: string, caption: string, entities?: MessageEntity[]) {
-    await this.bot.sendDocument(
+    await this.telegram.sendDocument(
       chat,
       {
         source: document,
@@ -178,7 +187,7 @@ class Telegram {
   }
 
   async sendMessage(chat: number | string, message: string, entities?: MessageEntity[]) {
-    await this.bot.sendMessage(chat, message, { entities });
+    await this.telegram.sendMessage(chat, message, { entities });
   }
 
   async getChats() {
