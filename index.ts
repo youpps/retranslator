@@ -79,7 +79,7 @@ async function bootstrap() {
           return;
         }
 
-        const messageText = message.rawText;
+        let messageText = message.rawText;
 
         if (messageText) {
           const filters = await Filters.getAll();
@@ -172,6 +172,10 @@ async function bootstrap() {
 
         const isExists = await Messages.exists(messageText);
         if (isExists) return;
+
+        if (username) {
+          messageText = messageText + `\n\nhttps://t.me/${username.slice(1)}/${message.id}`;
+        }
 
         for (let channel of channels) {
           // if (channels.includes(username as any)) {
