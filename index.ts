@@ -178,11 +178,9 @@ async function bootstrap() {
         for (let channel of channels) {
           if (message.media && !message.webPreview) {
             const isCaptionLengthCorrect = (messageText + reference).length <= 1024;
-            console.log("JUST MESSAGE MEDIA", messageText.slice(0, 21));
             let finalText = messageText;
 
             if (!isCaptionLengthCorrect) {
-              console.log("JUST MESSAGE NOT CORRECT CAPTION", messageText.slice(0, 21));
               finalText = messageText.slice(0, 1025 - reference.length);
             }
 
@@ -214,7 +212,7 @@ async function bootstrap() {
           } else {
             console.log("JUST MESSAGE", messageText.slice(0, 21));
 
-            await client.sendMessage(channel, messageText + reference, messageEntities);
+            await client.sendMessage(channel, message.rawText + reference, messageEntities);
           }
         }
       } catch (e) {
