@@ -173,20 +173,18 @@ async function bootstrap() {
         const isExists = await Messages.exists(messageText);
         if (isExists) return;
 
-        if (username) {
-          messageText = messageText + `\n\nhttps://t.me/${username.slice(1)}/${message.id}`;
-        }
+        const reference = username ? messageText + `\n\nhttps://t.me/${username.slice(1)}/${message.id}` : "";
 
         for (let channel of channels) {
-          // if (channels.includes(username as any)) {
-          //   continue;
-          // }
-
-          // if (channel === username || Number.isInteger(Number(username))) {
-          //   continue;
-          // }
-
           if (message.media && !message.webPreview) {
+            const isCaptionLengthCorrect = (messageText + reference).length <= 1024;
+
+            if (!isCaptionLengthCorrect) {
+              messageText = messageText.slice(0, 1025 - reference.length) + reference;
+            } else {
+              messageText = messageText + reference;
+            }
+
             if (message.groupedId) {
               if (message.photo) {
                 const photo = (await client.downloadMedia(message)) as Buffer;
