@@ -181,20 +181,18 @@ async function bootstrap() {
 
             if (!isCaptionLengthCorrect) {
               messageText = messageText.slice(0, 1025 - reference.length) + reference;
-            } else {
-              messageText = messageText + reference;
             }
 
             if (message.groupedId) {
               if (message.photo) {
                 const photo = (await client.downloadMedia(message)) as Buffer;
-                sendGroupedMessage(channel, message.groupedId.toJSNumber(), "photo", photo, "photo", messageText, messageEntities);
+                sendGroupedMessage(channel, message.groupedId.toJSNumber(), "photo", photo, "photo", messageText + reference, messageEntities);
               } else if (message.video) {
                 const video = (await client.downloadMedia(message)) as Buffer;
-                sendGroupedMessage(channel, message.groupedId.toJSNumber(), "video", video, "video", messageText, messageEntities);
+                sendGroupedMessage(channel, message.groupedId.toJSNumber(), "video", video, "video", messageText + reference, messageEntities);
               } else if (message.document) {
                 const document = (await client.downloadMedia(message)) as Buffer;
-                sendGroupedMessage(channel, message.groupedId.toJSNumber(), "document", document, (message.document.attributes[0] as any).fileName, messageText, messageEntities);
+                sendGroupedMessage(channel, message.groupedId.toJSNumber(), "document", document, (message.document.attributes[0] as any).fileName, messageText + reference, messageEntities);
               }
 
               return;
@@ -204,18 +202,16 @@ async function bootstrap() {
             // TEST: 1AQAOMTQ5LjE1NC4xNzUuNTkBu0AqbwfSqSIn+BD4mSpvwBhncGFg/ornbo1Jz1EeyWiPdZJ+mQAwzWSf7sPs1qFfc2QPn6b3JWh7wMmXBy5NlelskgaJ5tiyvv39ursNRc96wgoj4Ja+q+zEl6TIXRN8oRqLSzhvCzC7YLoNV/SNxElp1kRkod9mQytL+2JfuLHoIPGMFFvNqrgMH6X0tIvplstbgp+aoGGzWHSE8ee66JKPUHCCMfHt77Ox4dI8RLG23elCd1dPts1YTF80TM5yvN/qZJDeMYLOlnQ/GK4eveTEBLq+JUfDOEQglohVhPS9LNrWPvwUYT/hLtNwelGq64s3bb6uoygl6HJYxg77zS8=
             if (message.photo) {
               const photo = (await client.downloadMedia(message)) as Buffer;
-              await client.sendPhoto(channel, photo, messageText, messageEntities);
+              await client.sendPhoto(channel, photo, messageText + reference, messageEntities);
             } else if (message.video) {
               const video = (await client.downloadMedia(message)) as Buffer;
-              await client.sendVideo(channel, video, messageText, messageEntities);
+              await client.sendVideo(channel, video, messageText + reference, messageEntities);
             } else if (message.document) {
               const document = (await client.downloadMedia(message)) as Buffer;
-              await client.sendDocument(channel, document, (message.document.attributes[0] as any).fileName, messageText, messageEntities);
+              await client.sendDocument(channel, document, (message.document.attributes[0] as any).fileName, messageText + reference, messageEntities);
             }
           } else {
-            messageText = messageText + reference;
-
-            await client.sendMessage(channel, messageText, messageEntities);
+            await client.sendMessage(channel, messageText + reference, messageEntities);
           }
         }
       } catch (e) {
