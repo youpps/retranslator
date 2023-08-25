@@ -192,7 +192,7 @@ async function bootstrap() {
                 sendGroupedMessage(channel, message.groupedId.toJSNumber(), "video", video, "video", messageText + reference, messageEntities);
               } else if (message.document) {
                 const document = (await client.downloadMedia(message)) as Buffer;
-                sendGroupedMessage(channel, message.groupedId.toJSNumber(), "document", document, (message.document.attributes[0] as any).fileName, finalText + reference, messageEntities);
+                sendGroupedMessage(channel, message.groupedId.toJSNumber(), "document", document, (message.document.attributes[0] as any).fileName, messageText + reference, messageEntities);
               }
 
               return;
