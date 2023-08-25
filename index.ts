@@ -213,6 +213,8 @@ async function bootstrap() {
               await client.sendDocument(channel, document, (message.document.attributes[0] as any).fileName, messageText, messageEntities);
             }
           } else {
+            messageText = messageText + reference;
+
             await client.sendMessage(channel, messageText, messageEntities);
           }
         }
