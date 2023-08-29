@@ -178,6 +178,8 @@ class VkModule {
 
       for (let groupId of groupIds) {
         try {
+          console.log(groupId + " IS HANDLING");
+
           const { lastDate } = await VkConfig.getConfig();
 
           const posts = await VkModule.getGoodPosts(vk, groupId, lastDate);
