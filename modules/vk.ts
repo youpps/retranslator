@@ -215,6 +215,8 @@ class VkModule {
       console.log(ctx);
     });
 
+    vk.updates.startPolling();
+
     // setInterval(() => {
     //   console.log("VK TICK");
 
