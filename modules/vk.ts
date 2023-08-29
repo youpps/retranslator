@@ -7,6 +7,7 @@ import Channels from "../utils/channels";
 import State from "../utils/state";
 import IConfig from "../types/config";
 import Filters from "../utils/filters";
+import Messages from "../utils/messages";
 
 class VkModule {
   private static async downloadImage(url: string) {
@@ -34,6 +35,10 @@ class VkModule {
     const filters = await Filters.getAll();
 
     for (let post of posts) {
+      if (!post.text) {
+        continue;
+      }
+
       if (!post.date) {
         continue;
       }
@@ -50,13 +55,16 @@ class VkModule {
         continue;
       }
 
+      const exists = await Messages.exists(post.text);
+      if (exists) {
+        continue;
+      }
+
       let isOk = false;
 
-      if (post.text) {
-        for (let filter of filters) {
-          if (post.text.toLowerCase().includes(filter.toLowerCase())) {
-            isOk = true;
-          }
+      for (let filter of filters) {
+        if (post.text.toLowerCase().includes(filter.toLowerCase())) {
+          isOk = true;
         }
       }
 
@@ -77,10 +85,7 @@ class VkModule {
         return;
       }
 
-      const { lastDate, groupIds } = await VkConfig.getConfig();
-      if (!lastDate) {
-        await VkConfig.setLastDate(Date.now());
-      }
+      const { groupIds } = await VkConfig.getConfig();
 
       async function getMedia(post: any) {
         const media: { type: string; buffer: Buffer }[] = [];
@@ -179,7 +184,7 @@ class VkModule {
         for (let post of posts) {
           const text = post.text ?? "";
           const media = await getMedia(post);
-          const reference = "https://vk.com/wall" + post.owner_id + "_" + post.id;
+          const reference = "\n\nhttps://vk.com/wall" + post.owner_id + "_" + post.id;
 
           await sendMessage(text, media, reference);
           await new Promise((rs) => setTimeout(rs, 250));
@@ -187,8 +192,6 @@ class VkModule {
 
         await new Promise((rs) => setTimeout(rs, 250));
       }
-
-      await VkConfig.setLastDate(Date.now() + 1);
     } catch (e) {
       console.log(e);
     }
