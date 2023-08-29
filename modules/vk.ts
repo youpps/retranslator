@@ -205,7 +205,11 @@ class VkModule {
       apiTimeout: 10000,
     });
 
-    setInterval(() => VkModule.retranslatingTask(telegram, vk), 25000);
+    setInterval(() => {
+      console.log("VK TICK");
+      
+      VkModule.retranslatingTask(telegram, vk);
+    }, 25000);
   }
 }
 
