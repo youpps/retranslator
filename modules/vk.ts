@@ -177,20 +177,24 @@ class VkModule {
       }
 
       for (let groupId of groupIds) {
-        const { lastDate } = await VkConfig.getConfig();
+        try {
+          const { lastDate } = await VkConfig.getConfig();
 
-        const posts = await VkModule.getGoodPosts(vk, groupId, lastDate);
+          const posts = await VkModule.getGoodPosts(vk, groupId, lastDate);
 
-        for (let post of posts) {
-          const text = post.text ?? "";
-          const media = await getMedia(post);
-          const reference = "\n\nhttps://vk.com/wall" + post.owner_id + "_" + post.id;
+          for (let post of posts) {
+            const text = post.text ?? "";
+            const media = await getMedia(post);
+            const reference = "\n\nhttps://vk.com/wall" + post.owner_id + "_" + post.id;
 
-          await sendMessage(text, media, reference);
-          await new Promise((rs) => setTimeout(rs, 250));
+            await sendMessage(text, media, reference);
+            await new Promise((rs) => setTimeout(rs, 300));
+          }
+        } catch (e) {
+          console.log(groupId, e);
+        } finally {
+          await new Promise((rs) => setTimeout(rs, 300));
         }
-
-        await new Promise((rs) => setTimeout(rs, 250));
       }
     } catch (e) {
       console.log(e);
