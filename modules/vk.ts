@@ -211,17 +211,13 @@ class VkModule {
       apiTimeout: 10000,
     });
 
-    vk.updates.on("wall_post_new", (ctx) => {
-      console.log(ctx);
-    });
+    const MINUT = 1000 * 60;
 
-    vk.updates.startPolling();
+    setInterval(() => {
+      console.log("VK TICK");
 
-    // setInterval(() => {
-    //   console.log("VK TICK");
-
-    //   VkModule.retranslatingTask(telegram, vk);
-    // }, 1000 * 60 * 1.5);
+      VkModule.retranslatingTask(telegram, vk);
+    }, 30 * MINUT);
   }
 }
 
