@@ -47,9 +47,9 @@ class VkModule {
         continue;
       }
 
-      if (post.copy_history?.length) {
-        continue;
-      }
+      // if (post.copy_history?.length) {
+      //   continue;
+      // }
 
       if (post.marked_as_ads !== 0) {
         continue;
@@ -207,7 +207,7 @@ class VkModule {
 
     setInterval(() => {
       console.log("VK TICK");
-      
+
       VkModule.retranslatingTask(telegram, vk);
     }, 25000);
   }
