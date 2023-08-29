@@ -215,7 +215,7 @@ class VkModule {
       console.log("VK TICK");
 
       VkModule.retranslatingTask(telegram, vk);
-    }, 50000);
+    }, 1000 * 60 * 1.5);
   }
 }
 
