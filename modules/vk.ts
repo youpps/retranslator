@@ -22,7 +22,7 @@ class VkModule {
     const res = await vk.api.wall.get({
       owner_id: -Math.abs(owner_id),
       count: 100,
-      filter: "owner",
+      filter: "all",
     });
 
     return res.items;
