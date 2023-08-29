@@ -12,31 +12,31 @@
   </div>
 </nav>
 <div class="container mt-4">
-  <h2>Управление ключевыми словами</h2>
+  <h2>Группы вк</h2>
   <form method="post">
     <div class="form-group">
-      <label for="filter_word">Новое ключевое слово:</label>
-      <input type="text" class="form-control" id="filter_word" name="filter_word" />
+      <label for="groupId">Новая группа:</label>
+      <input type="text" class="form-control" id="groupId" name="groupId" />
     </div>
     <div class="form-group">
-      <button type="submit" name="add_filter_word" class="btn btn-primary" value="true">Добавить ключевое слово</button>
+      <button type="submit" name="add_group" class="btn btn-primary" value="true">Добавить группу</button>
     </div>
   </form>
   <table class="table">
     <thead>
       <tr>
-        <th>Ключевое слово</th>
-        <th>Удалить ключевое слово</th>
+        <th>Группа</th>
+        <th>Удалить группу</th>
       </tr>
     </thead>
     <tbody>
-      {{#each filters}}
+      {{#each groupIds}}
         <tr>
           <td>{{this}}</td>
           <td>
             <form method="post">
-              <input type="hidden" name="filter_word" value="{{this}}" />
-              <button type="submit" name="remove_filter_word" value="true" class="btn btn-danger">Удалить</button>
+              <input type="hidden" name="groupId" value="{{this}}" />
+              <button type="submit" name="remove_group" value="true" class="btn btn-danger">Удалить</button>
             </form>
           </td>
         </tr>

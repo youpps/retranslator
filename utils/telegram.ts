@@ -103,7 +103,7 @@ class Telegram {
     this.client.addEventHandler(callback, new NewMessage({ incoming: true, outgoing: false }));
   }
 
-  async sendPhotoMediaGroup(chat: number | string, files: { file: Buffer; caption: string; entities: MessageEntity[] | undefined }[]) {
+  async sendPhotoMediaGroup(chat: number | string, files: { file: Buffer; caption: string; entities?: MessageEntity[] | undefined }[]) {
     await this.telegram.sendMediaGroup(
       chat,
       files.map(({ file, caption, entities }) => ({
