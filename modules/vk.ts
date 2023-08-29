@@ -6,6 +6,7 @@ import VkConfig from "../utils/vk";
 import Channels from "../utils/channels";
 import State from "../utils/state";
 import IConfig from "../types/config";
+import Filters from "../utils/filters";
 
 class VkModule {
   private static async downloadImage(url: string) {
@@ -30,6 +31,8 @@ class VkModule {
     const posts = await VkModule.getWall(vk, owner_id);
     const goodPosts: WallWallpostFull[] = [];
 
+    const filters = await Filters.getAll();
+
     for (let post of posts) {
       if (!post.date) {
         continue;
@@ -44,6 +47,20 @@ class VkModule {
       }
 
       if (post.marked_as_ads !== 0) {
+        continue;
+      }
+
+      let isOk = false;
+
+      if (post.text) {
+        for (let filter of filters) {
+          if (post.text.toLowerCase().includes(filter.toLowerCase())) {
+            isOk = true;
+          }
+        }
+      }
+
+      if (!isOk) {
         continue;
       }
 
@@ -112,19 +129,24 @@ class VkModule {
       return media;
     }
 
-    async function sendMessage(text: string, media: any[]) {
+    async function sendMessage(text: string, media: any[], reference: string) {
       const channels = await Channels.getAll();
 
       for (let channel of channels) {
         if (!media.length) {
-          await telegram.sendMessage(channel, text);
+          await telegram.sendMessage(channel, text + reference);
           break;
+        }
+
+        const isCaptionLengthCorrect = (text + reference).length <= 1024;
+        if (!isCaptionLengthCorrect) {
+          text = text.slice(0, 1025 - reference.length);
         }
 
         if (media.length === 1) {
           const mediaItem = media[0];
           if (mediaItem.type === "photo") {
-            await telegram.sendPhoto(channel, mediaItem.buffer, text);
+            await telegram.sendPhoto(channel, mediaItem.buffer, text + reference);
           }
 
           break;
@@ -134,7 +156,7 @@ class VkModule {
           if (idx === 0) {
             return {
               file: mediaItem.buffer,
-              caption: text,
+              caption: text + reference,
             };
           }
 
@@ -156,8 +178,9 @@ class VkModule {
       for (let post of posts) {
         const text = post.text ?? "";
         const media = await getMedia(post);
+        const reference = "https://vk.com/wall" + post.owner_id + "_" + post.id;
 
-        await sendMessage(text, media);
+        await sendMessage(text, media, reference);
       }
 
       await new Promise((rs) => setTimeout(rs, 250));
