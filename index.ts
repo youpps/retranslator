@@ -6,7 +6,7 @@ import VkModule from "./modules/vk";
 async function bootstrap() {
   try {
     const telegram = await TelegramModule.init(config);
-    await VkModule.init(config, telegram);
+    // await VkModule.init(config, telegram);
     await ServerModule.init(config);
   } catch (e) {
     console.log(e);

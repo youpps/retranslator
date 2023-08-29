@@ -71,122 +71,127 @@ class VkModule {
   }
 
   static async retranslatingTask(telegram: Telegram, vk: VK) {
-    const { isActive } = await State.getState();
-    if (!isActive) {
-      return;
-    }
-
-    const { lastDate, groupIds } = await VkConfig.getConfig();
-    if (!lastDate) {
-      await VkConfig.setLastDate(Date.now());
-    }
-
-    async function getMedia(post: any) {
-      const media: { type: string; buffer: Buffer }[] = [];
-
-      if (post.attachments) {
-        for (let attachment of post.attachments) {
-          if (attachment.type === "photo") {
-            const photoAttachment = attachment.photo;
-            const photo = await VkModule.downloadImage(photoAttachment.sizes[photoAttachment.sizes.length - 1].url);
-
-            media.push({
-              type: "photo",
-              buffer: photo,
-            });
-
-            continue;
-          }
-
-          // if (attachment.type === "audio") {
-          //   const audioAttachment = attachment.audio;
-
-          //   const audio = await VkModule.downloadImage(audioAttachment.url);
-
-          //   media.push({
-          //     type: "audio",
-          //     buffer: audio,
-          //   });
-
-          //   continue;
-          // }
-
-          if (attachment.type === "video") {
-            const videoAttachment = attachment.video;
-
-            const videoPreview = await VkModule.downloadImage(videoAttachment.url);
-
-            media.push({
-              type: "photo",
-              buffer: videoPreview,
-            });
-
-            continue;
-          }
-        }
+    try {
+      const { isActive } = await State.getState();
+      if (!isActive) {
+        return;
       }
 
-      return media;
-    }
+      const { lastDate, groupIds } = await VkConfig.getConfig();
+      if (!lastDate) {
+        await VkConfig.setLastDate(Date.now());
+      }
 
-    async function sendMessage(text: string, media: any[], reference: string) {
-      const channels = await Channels.getAll();
+      async function getMedia(post: any) {
+        const media: { type: string; buffer: Buffer }[] = [];
 
-      for (let channel of channels) {
-        if (!media.length) {
-          await telegram.sendMessage(channel, text + reference);
-          break;
+        if (post.attachments) {
+          for (let attachment of post.attachments) {
+            if (attachment.type === "photo") {
+              const photoAttachment = attachment.photo;
+              const photo = await VkModule.downloadImage(photoAttachment.sizes[photoAttachment.sizes.length - 1].url);
+
+              media.push({
+                type: "photo",
+                buffer: photo,
+              });
+
+              continue;
+            }
+
+            // if (attachment.type === "audio") {
+            //   const audioAttachment = attachment.audio;
+
+            //   const audio = await VkModule.downloadImage(audioAttachment.url);
+
+            //   media.push({
+            //     type: "audio",
+            //     buffer: audio,
+            //   });
+
+            //   continue;
+            // }
+
+            if (attachment.type === "video") {
+              const videoAttachment = attachment.video;
+
+              const videoPreview = await VkModule.downloadImage(videoAttachment.url);
+
+              media.push({
+                type: "photo",
+                buffer: videoPreview,
+              });
+
+              continue;
+            }
+          }
         }
 
-        const isCaptionLengthCorrect = (text + reference).length <= 1024;
-        if (!isCaptionLengthCorrect) {
-          text = text.slice(0, 1025 - reference.length);
-        }
+        return media;
+      }
 
-        if (media.length === 1) {
-          const mediaItem = media[0];
-          if (mediaItem.type === "photo") {
-            await telegram.sendPhoto(channel, mediaItem.buffer, text + reference);
+      async function sendMessage(text: string, media: any[], reference: string) {
+        const channels = await Channels.getAll();
+
+        for (let channel of channels) {
+          if (!media.length) {
+            await telegram.sendMessage(channel, text + reference);
+            break;
           }
 
-          break;
-        }
+          const isCaptionLengthCorrect = (text + reference).length <= 1024;
+          if (!isCaptionLengthCorrect) {
+            text = text.slice(0, 1025 - reference.length);
+          }
 
-        const mediaGroup = media.map((mediaItem, idx) => {
-          if (idx === 0) {
+          if (media.length === 1) {
+            const mediaItem = media[0];
+            if (mediaItem.type === "photo") {
+              await telegram.sendPhoto(channel, mediaItem.buffer, text + reference);
+            }
+
+            break;
+          }
+
+          const mediaGroup = media.map((mediaItem, idx) => {
+            if (idx === 0) {
+              return {
+                file: mediaItem.buffer,
+                caption: text + reference,
+              };
+            }
+
             return {
               file: mediaItem.buffer,
-              caption: text + reference,
+              caption: "",
             };
-          }
+          });
 
-          return {
-            file: mediaItem.buffer,
-            caption: "",
-          };
-        });
-
-        await telegram.sendPhotoMediaGroup(channel, mediaGroup);
-      }
-    }
-
-    for (let groupId of groupIds) {
-      const { lastDate } = await VkConfig.getConfig();
-
-      const posts = await VkModule.getGoodPosts(vk, groupId, lastDate);
-
-      for (let post of posts) {
-        const text = post.text ?? "";
-        const media = await getMedia(post);
-        const reference = "https://vk.com/wall" + post.owner_id + "_" + post.id;
-
-        await sendMessage(text, media, reference);
+          await telegram.sendPhotoMediaGroup(channel, mediaGroup);
+        }
       }
 
-      await new Promise((rs) => setTimeout(rs, 250));
-    }
+      for (let groupId of groupIds) {
+        const { lastDate } = await VkConfig.getConfig();
 
-    await VkConfig.setLastDate(Date.now() + 1);
+        const posts = await VkModule.getGoodPosts(vk, groupId, lastDate);
+
+        for (let post of posts) {
+          const text = post.text ?? "";
+          const media = await getMedia(post);
+          const reference = "https://vk.com/wall" + post.owner_id + "_" + post.id;
+
+          await sendMessage(text, media, reference);
+          await new Promise((rs) => setTimeout(rs, 250));
+        }
+
+        await new Promise((rs) => setTimeout(rs, 250));
+      }
+
+      await VkConfig.setLastDate(Date.now() + 1);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   static async init(config: IConfig, telegram: Telegram) {

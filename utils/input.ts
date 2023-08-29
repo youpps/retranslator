@@ -1,4 +1,3 @@
-import { SocketConnectOpts, AddressInfo, SocketReadyState } from "net";
 import { createInterface } from "readline/promises";
 
 async function input(query?: string) {
