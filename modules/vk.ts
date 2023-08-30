@@ -141,7 +141,7 @@ class VkModule {
         for (let channel of channels) {
           if (!media.length) {
             await telegram.sendMessage(channel, text + reference);
-            break;
+            continue
           }
 
           const isCaptionLengthCorrect = (text + reference).length <= 1024;
@@ -155,7 +155,7 @@ class VkModule {
               await telegram.sendPhoto(channel, mediaItem.buffer, text + reference);
             }
 
-            break;
+            continue
           }
 
           const mediaGroup = media.map((mediaItem, idx) => {
@@ -192,7 +192,7 @@ class VkModule {
             await sendMessage(text, media, reference);
             await new Promise((rs) => setTimeout(rs, 300));
           }
-        } catch (e) {
+        } catch (e) { 
           console.log(groupId, e);
         } finally {
           await new Promise((rs) => setTimeout(rs, 300));
