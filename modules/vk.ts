@@ -65,10 +65,12 @@ class VkModule {
     };
 
     for (let post of posts) {
-      for (let copyPost of post.copy_history) {
-        const isOk = await checkPost(copyPost, after);
-        if (isOk) {
-          goodPosts.push(post);
+      if (post.copy_history && Array.isArray(post.copy_history)) {
+        for (let copyPost of post.copy_history) {
+          const isOk = await checkPost(copyPost, after);
+          if (isOk) {
+            goodPosts.push(post);
+          }
         }
       }
 
