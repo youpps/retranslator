@@ -211,7 +211,7 @@ class VkModule {
       const vk = pool.getClient();
 
       VkModule.retranslatingTask(telegram, vk);
-    }, 30 * MINUT);
+    }, 4.5 * MINUT);
   }
 }
 
