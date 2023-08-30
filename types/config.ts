@@ -5,7 +5,7 @@ interface IConfig {
   telegramPhone: string;
   telegramPassword: string;
   botToken: string;
-  vkToken: string;
+  vkTokens: string[];
 }
 
 export default IConfig;
