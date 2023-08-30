@@ -31,30 +31,26 @@ class VkModule {
 
     const filters = await Filters.getAll();
 
-    for (let post of posts) {
+    const checkPost = async (post: WallWallpostFull, after?: string | number | Date) => {
       if (!post.text) {
-        continue;
+        return false;
       }
 
       if (!post.date) {
-        continue;
+        return false;
       }
 
       if (after && moment(after).isAfter(moment(post.date * 1000))) {
-        continue;
+        return false;
       }
 
-      // if (post.copy_history?.length) {
-      //   continue;
-      // }
-
       if (post.marked_as_ads !== 0) {
-        continue;
+        return false;
       }
 
       const exists = await Messages.exists(post.text);
       if (exists) {
-        continue;
+        return false;
       }
 
       let isOk = false;
@@ -65,11 +61,21 @@ class VkModule {
         }
       }
 
-      if (!isOk) {
-        continue;
+      return isOk;
+    };
+
+    for (let post of posts) {
+      for (let copyPost of post.copy_history) {
+        const isOk = await checkPost(copyPost, after);
+        if (isOk) {
+          goodPosts.push(post);
+        }
       }
 
-      goodPosts.push(post);
+      const isOk = await checkPost(post, after);
+      if (isOk) {
+        goodPosts.push(post);
+      }
     }
 
     return goodPosts;
