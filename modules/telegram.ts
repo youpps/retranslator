@@ -56,7 +56,7 @@ class TelegramModule {
         }
 
         delete groupedMessages[groupedId];
-      }, 15000);
+      }, 35000);
     }
 
     client.onMessage(async (e) => {
