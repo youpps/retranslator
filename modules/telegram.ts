@@ -75,8 +75,12 @@ class TelegramModule {
 
           let isOk = false;
 
+          const correctText = messageText.replace(/\s\s+/g, " ").toLowerCase();
+
           for (let filter of filters) {
-            if (messageText.toLowerCase().includes(filter.toLowerCase())) {
+            const correctFilter = filter.replace(/\s\s+/g, " ").toLowerCase();
+
+            if (correctText.includes(correctFilter)) {
               isOk = true;
             }
           }
